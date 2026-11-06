@@ -1,0 +1,24 @@
+{
+  "id": "./",
+  "name": "어디뒀지 - 우리 집 물건 위치",
+  "short_name": "어디뒀지",
+  "description": "정리한 물건의 위치를 사진·QR·말로 기록하고 가족이 함께 찾는 앱",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ECEFE9",
+  "theme_color": "#ECEFE9",
+  "categories": ["lifestyle", "productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "정리 기록", "short_name": "기록", "url": "./?action=new", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "QR 찍기", "short_name": "QR", "url": "./?action=scan", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

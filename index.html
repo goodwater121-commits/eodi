@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>어디뒀지</title>
+<meta name="description" content="정리한 물건의 위치를 사진·QR·말로 기록하고 가족이 함께 찾는 앱">
+<meta name="theme-color" content="#ECEFE9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121714" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="어디뒀지">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+<!-- 1. 로그인 -->
+<section id="screen-login" class="wrap" hidden>
+  <div class="gate">
+    <h1>어디뒀지</h1>
+    <p class="lead">정리한 사람이 기록하고, 찾는 사람은 검색 한 번으로 찾아요. 우리 집 물건 위치를 가족이 함께 봐요.</p>
+    <div class="sample" aria-hidden="true">
+      <span class="q">건전지 어디 있어?</span>
+      <span class="tapes"><span class="tape dim">주방</span><i class="sep">›</i><span class="tape">싱크대 상부장</span><i class="sep">›</i><span class="tape">오른쪽 문</span></span>
+    </div>
+    <button class="gbtn" id="btn-google">
+      <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      Google로 시작하기</button>
+    <div class="or">또는 이메일 인증번호</div>
+    <div id="email-step1" class="field">
+      <div class="row"><input class="inp" id="login-email" type="email" inputmode="email" placeholder="이메일 주소" autocomplete="email"><button class="btn" id="btn-email">번호 받기</button></div>
+    </div>
+    <div id="email-step2" class="field" hidden>
+      <label for="login-otp">메일로 받은 6자리 번호</label>
+      <div class="row"><input class="inp code-inp" id="login-otp" inputmode="numeric" maxlength="8" autocomplete="one-time-code"><button class="btn primary" id="btn-otp">확인</button></div>
+    </div>
+    <p class="err" id="login-err" hidden></p>
+  </div>
+</section>
+
+<!-- 2. 집 만들기 / 참여 -->
+<section id="screen-onboard" class="wrap" hidden>
+  <div class="gate">
+    <h1>우리 집을<br>연결해요</h1>
+    <p class="lead">한 사람이 집을 만들고, 다른 가족은 초대코드로 들어오면 같은 기록을 함께 봐요.</p>
+    <div class="field"><label for="ob-name">앱에서 보일 내 이름</label><input class="inp" id="ob-name" maxlength="20" placeholder="예) 경일, 아빠, 엄마"></div>
+    <div class="seg" role="group" aria-label="집 연결 방법">
+      <button id="ob-tab-new" aria-pressed="true">새 집 만들기</button>
+      <button id="ob-tab-join" aria-pressed="false">초대코드로 들어가기</button>
+    </div>
+    <div id="ob-new" class="field"><label for="ob-house">집 이름</label><input class="inp" id="ob-house" maxlength="40" value="우리 집"></div>
+    <div id="ob-join" class="field" hidden><label for="ob-code">초대코드 6자리</label><input class="inp code-inp" id="ob-code" maxlength="6" autocomplete="off" placeholder="ABC123"></div>
+    <button class="btn primary block" id="ob-go">시작하기</button>
+    <p class="err" id="ob-err" hidden></p>
+    <button class="btn" id="ob-logout" style="align-self:center">다른 계정으로 로그인</button>
+  </div>
+</section>
+
+<!-- 3. 앱 -->
+<div id="screen-app" hidden>
+<header class="top"><div class="wrap">
+  <h1 class="brand"><span id="house-name">어디뒀지</span> <small>물건 위치</small></h1>
+  <div class="tools">
+    <div class="status" id="status"><span class="dot"></span><span>연결 중</span></div>
+    <button class="gear" data-act="settings" aria-label="설정"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <div id="demo-bar" class="demo-bar" hidden></div>
+  <section class="view" id="view-find">
+    <div>
+      <div class="search">
+        <div class="search-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="무엇을 찾으세요?" autocomplete="off" aria-label="물건 검색">
+        </div>
+        <button class="icon-btn" data-act="scan" data-target="browse" aria-label="수납함 QR 찍기">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>QR
+        </button>
+      </div>
+      <p class="hint">이름, 메모, 장소로 찾아요. 초성(ㄱㅈㅈ)도 돼요.</p>
+    </div>
+    <div id="find-body" class="view"></div>
+  </section>
+  <section class="view" id="view-browse" hidden><div id="browse-body" class="view"></div></section>
+  <section class="view" id="view-recent" hidden><div id="recent-body" class="view"></div></section>
+</main>
+
+<nav class="nav" aria-label="메뉴"><div class="in">
+  <button class="tab" data-tab="find" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>찾기</button>
+  <button class="tab" data-tab="browse"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>방별 보기</button>
+  <button class="fab" data-act="new-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>정리 기록</button>
+  <button class="tab" data-tab="recent"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>최근 변경<span class="pip" id="pip" hidden></span></button>
+</div></nav>
+</div>
+
+<div id="sheet-root"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<div id="print-area" aria-hidden="true"></div>
+<input type="file" id="scan-cam" accept="image/*" capture="environment" hidden>
+<input type="file" id="photo-cam" accept="image/*" capture="environment" hidden>
+<input type="file" id="photo-lib" accept="image/*" hidden>
+
+<script src="vendor/supabase.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script src="vendor/jsQR.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
